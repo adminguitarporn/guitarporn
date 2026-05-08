@@ -28,7 +28,7 @@ export function SiteNavbar() {
       <Container className="flex h-16 items-center justify-between gap-4">
         <Link
           href="/"
-          className="text-lg font-semibold tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-crimson/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="text-lg font-semibold tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           <GuitarPornText />
         </Link>

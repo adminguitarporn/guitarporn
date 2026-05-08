@@ -9,7 +9,7 @@ export function GearCard({ gear }: Props) {
   const [primary, secondary] = gear.images;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-3xl border border-white/[0.07] bg-zinc-900/30 ring-1 ring-white/[0.03] transition hover:border-crimson/25 hover:ring-crimson/10">
+    <article className="group flex flex-col overflow-hidden rounded-3xl border border-white/[0.07] bg-zinc-900/30 ring-1 ring-white/[0.03] transition hover:border-white/20 hover:ring-white/10">
       <div className="relative aspect-[4/5] w-full overflow-hidden bg-zinc-950 sm:aspect-[3/4]">
         <Image
           src={primary.url}
@@ -35,7 +35,7 @@ export function GearCard({ gear }: Props) {
 
       <div className="flex flex-1 flex-col gap-3 border-t border-white/[0.06] px-6 pb-6 pt-5 sm:px-7 sm:pb-7 sm:pt-6">
         <div>
-          <p className="text-[0.65rem] font-semibold tracking-[0.2em] text-crimson uppercase">
+          <p className="text-[0.65rem] font-bold tracking-[0.2em] text-white uppercase">
             {gear.brand}
           </p>
           <h2 className="mt-1 text-2xl font-semibold tracking-tight text-white sm:text-[1.65rem]">

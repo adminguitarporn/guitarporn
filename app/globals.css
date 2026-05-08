@@ -4,7 +4,7 @@
   --background: #09090b;
   --foreground: #fafafa;
   --crimson: #dc143c;
-  --crimson-glow: rgba(220, 20, 60, 0.35);
+  --crimson-glow: rgba(255, 255, 255, 0.18);
 }
 
 @theme inline {
@@ -24,4 +24,31 @@ body {
 ::selection {
   background: var(--crimson-glow);
   color: #fff;
+}
+
+@keyframes home-guitar-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translateY(-12px);
+    opacity: 0.72;
+  }
+}
+
+@keyframes home-guitar-shimmer {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
+  }
+}
+
+.home-guitar-silhouette svg {
+  animation: home-guitar-drift 8s ease-in-out infinite,
+    home-guitar-shimmer 6s ease-in-out infinite;
 }

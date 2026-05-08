@@ -20,7 +20,7 @@ export function ContentInProgress() {
         <p className="mt-10">
           <Link
             href="/"
-            className="text-sm font-medium text-crimson underline-offset-4 hover:underline"
+            className="text-sm font-bold text-white underline-offset-4 hover:underline"
           >
             ← Back home
           </Link>

@@ -9,7 +9,7 @@ export function HeroSection() {
         aria-hidden
         style={{
           backgroundImage:
-            "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(220,20,60,0.14), transparent), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(255,255,255,0.04), transparent)",
+            "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,255,255,0.08), transparent), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(255,255,255,0.04), transparent)",
         }}
       />
       <Container className="relative">
