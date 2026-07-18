@@ -56,9 +56,40 @@ max 5 MB), automatically downscaled in their browser to max 1600px, and
 stored in Supabase Storage under their user ID. The Gear DB reads photos
 straight from there. Nothing for you to manage.
 
+What members can do: register with a public display name, sign in, upload
+guitars, and — on the same page — edit any entry (including replacing the
+photo) or delete it. Every gallery card shows "Added by {name}". Forgot
+password is built in (`/account/reset`).
+
 **Before going live:** Supabase dashboard → **Authentication → URL
 Configuration** → set Site URL to `https://guitarporn.club` (so confirmation
 emails link to the real site).
+
+### Auth checklist (done once — recorded for reference)
+
+- **Redirect URLs** (Authentication → URL Configuration → Redirect URLs):
+  `http://localhost:3000/**`, `https://guitarporn.club/**`, and your
+  `https://*.vercel.app/**` address. Password-reset links only redirect to
+  addresses on this list.
+- **Custom email sender — Resend** (done): Supabase's built-in mailer caps at
+  ~2–4 emails/hour. Resend (free, 3,000/mo) is wired in at **Project
+  Settings → Authentication → SMTP Settings** — host `smtp.resend.com`,
+  port 465, user `resend`, password = Resend API key, sender
+  `noreply@guitarporn.club`.
+- **Confirm email** (Authentication → Sign In / Providers → Email): keep ON
+  in production; toggle OFF only for rapid local testing.
+
+### Moderating member content (you, as owner)
+
+A guitar entry lives in two places in the Supabase dashboard:
+
+1. **Table Editor → guitars** — the entry. Deleting the row removes it from
+   the site immediately.
+2. **Storage → guitars → {member-id}/** — the photo file. Delete it after
+   the row so the image stops being reachable.
+
+Repeat offender: **Authentication → Users → ⋯ → Delete user** — removes all
+their entries automatically (their storage folder needs manual cleanup).
 
 ---
 

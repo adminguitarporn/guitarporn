@@ -72,7 +72,13 @@ function AuthPanel({ onAuthed }: { onAuthed: (user: User) => void }) {
         if (data.user) onAuthed(data.user);
       }
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Something went wrong.");
+      const raw = err instanceof Error ? err.message : String(err ?? "");
+      const useless = raw === "" || raw === "{}" || raw === "[object Object]";
+      setMessage(
+        useless
+          ? "The email couldn't be sent. This usually means the email service (SMTP/Resend) in Supabase isn't configured correctly — check the API key and that the domain is verified."
+          : raw,
+      );
     } finally {
       setBusy(false);
     }

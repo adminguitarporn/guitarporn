@@ -15,6 +15,7 @@ const inputClass =
 export function ResetForm() {
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
   const [ready, setReady] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
@@ -23,8 +24,38 @@ export function ResetForm() {
 
   useEffect(() => {
     if (!supabase) return;
-    // The recovery link logs the user in; confirm we have a session.
-    supabase.auth.getUser().then(({ data }) => setReady(!!data.user));
+
+    // Watch for the session appearing (covers auto-detection).
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) setReady(true);
+    });
+
+    // Already signed in? (e.g. auto-exchange finished before we mounted)
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) setReady(true);
+    });
+
+    // Explicitly exchange the ?code= from the email link, and surface
+    // the real reason if it fails (spent link, different browser, ...).
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
+        if (data?.session?.user) {
+          setReady(true);
+        } else if (error) {
+          const m = error.message || "";
+          setLinkError(
+            /verifier/i.test(m)
+              ? "This link was opened in a different browser than the one that requested it. Copy the link into that browser, or request a new reset from this one."
+              : /expired|invalid/i.test(m)
+                ? "This link has expired or was already used. Request a new reset email."
+                : m,
+          );
+        }
+      });
+    }
+
+    return () => sub.subscription.unsubscribe();
   }, [supabase]);
 
   if (!supabase) {
@@ -77,8 +108,8 @@ export function ResetForm() {
       <h2 className="text-lg font-semibold text-white">Set a new password</h2>
       {!ready && (
         <p className="mt-2 text-sm text-amber-400">
-          Open this page from the link in your reset email — otherwise the
-          change can&apos;t be verified.
+          {linkError ??
+            "Open this page from the link in your reset email — otherwise the change can't be verified."}
         </p>
       )}
       <div className="mt-6 flex flex-col gap-4">
