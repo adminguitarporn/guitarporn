@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Atmosphere } from "@/components/fx/atmosphere";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteNavbar } from "@/components/layout/site-navbar";
 import "./globals.css";
@@ -37,8 +38,9 @@ export default function RootLayout({
       className={`dark ${geistSans.variable} ${geistMono.variable} h-full scroll-smooth`}
     >
       <body className="flex min-h-full flex-col bg-zinc-950 font-sans text-zinc-100 antialiased">
+        <Atmosphere />
         <SiteNavbar />
-        <div className="flex-1">{children}</div>
+        <div className="relative z-10 flex-1">{children}</div>
         <SiteFooter />
       </body>
     </html>

@@ -3,14 +3,15 @@
 :root {
   --background: #09090b;
   --foreground: #fafafa;
-  --crimson: #dc143c;
-  --crimson-glow: rgba(255, 255, 255, 0.18);
+  --electric: #3b82f6;
+  --electric-bright: #93c5fd;
+  --electric-glow: rgba(59, 130, 246, 0.22);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-crimson: var(--crimson);
+  --color-electric: var(--electric);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -22,7 +23,7 @@ body {
 }
 
 ::selection {
-  background: var(--crimson-glow);
+  background: var(--electric-glow);
   color: #fff;
 }
 
@@ -51,4 +52,152 @@ body {
 .home-guitar-silhouette svg {
   animation: home-guitar-drift 8s ease-in-out infinite,
     home-guitar-shimmer 6s ease-in-out infinite;
+}
+
+/* ============================================================
+   Motion system — slow, smooth, premium.
+   Ease: cubic-bezier(.22,.61,.36,1). Durations: 150/250/450/800/1500ms.
+   ============================================================ */
+
+:root {
+  --ease-lux: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ---- Hero: breathe, don't zoom (≤ 2.5% scale) ---- */
+
+@keyframes hero-breathe {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.025);
+  }
+}
+
+.animate-hero-zoom {
+  animation: hero-breathe 16s var(--ease-lux) infinite alternate;
+}
+
+/* ---- Load-in reveal with stagger (hero text, etc.) ---- */
+
+@keyframes lux-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.lux-in {
+  opacity: 0;
+  animation: lux-in 800ms var(--ease-lux) forwards;
+}
+
+.lux-in-2 {
+  animation-delay: 250ms;
+}
+
+.lux-in-3 {
+  animation-delay: 450ms;
+}
+
+/* ---- Page transitions: fade + blur crossfade ---- */
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.page-enter {
+  animation: page-enter 450ms var(--ease-lux) both;
+}
+
+/* ---- Ambient atmosphere layers (see components/fx/atmosphere.tsx) ---- */
+
+@keyframes ambient-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0);
+  }
+  to {
+    transform: translate3d(2%, 1.5%, 0);
+  }
+}
+
+.ambient-wash {
+  background: radial-gradient(
+    ellipse 50% 38% at 35% 25%,
+    rgba(255, 255, 255, 0.015),
+    transparent 70%
+  );
+  animation: ambient-drift 60s var(--ease-lux) infinite alternate;
+  will-change: transform;
+}
+
+@keyframes ambient-leak {
+  from {
+    transform: translate3d(-4%, 0, 0) rotate(18deg);
+    opacity: 0.5;
+  }
+  to {
+    transform: translate3d(4%, 2%, 0) rotate(18deg);
+    opacity: 1;
+  }
+}
+
+.ambient-leak {
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    rgba(255, 255, 255, 0.016) 50%,
+    transparent 58%
+  );
+  animation: ambient-leak 90s var(--ease-lux) infinite alternate;
+  will-change: transform, opacity;
+}
+
+@keyframes ambient-vignette {
+  from {
+    opacity: 0.75;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ambient-vignette {
+  background: radial-gradient(
+    ellipse 100% 95% at 50% 45%,
+    transparent 62%,
+    rgba(0, 0, 0, 0.22) 100%
+  );
+  animation: ambient-vignette 45s var(--ease-lux) infinite alternate;
+}
+
+/* ---- Reduced motion: still, not broken ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-zoom,
+  .ambient-wash,
+  .ambient-leak,
+  .ambient-vignette {
+    animation: none;
+  }
+  .lux-in {
+    opacity: 1;
+    animation: none;
+  }
+  .page-enter {
+    animation: none;
+  }
 }

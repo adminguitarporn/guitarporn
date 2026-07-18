@@ -1,22 +1,48 @@
 import { mockGear } from "@/lib/repositories/mock-gear";
-import type { Gear } from "@/types/gear";
+import { getSupabaseServerClient } from "@/lib/supabase/server";
+import type { Gear, GearBrand } from "@/types/gear";
 
-/**
- * Gear listing — today backed by static mocks.
- *
- * Supabase migration path:
- * 1. Add `gear` table (id uuid, owner_id uuid references auth.users, brand text, model text,
- *    description text, image_urls text[] check array_length <= 2, created_at timestamptz).
- * 2. Create `lib/supabase/server.ts` using `@supabase/ssr` and service role / anon as needed.
- * 3. Replace the body below with `const supabase = await createServerClient()` then
- *    `supabase.from('gear').select('*').order('created_at', { ascending: false })`.
- * 4. Map rows → `Gear` (validate max two images in a small mapper).
- */
-export async function getGearList(): Promise<Gear[]> {
-  return mockGear;
+type GuitarRow = {
+  id: string;
+  brand: string;
+  model: string;
+  color: string;
+  year: number | null;
+  image_url: string;
+  owner_id: string | null;
+  owner_name: string | null;
+  created_at: string;
+};
+
+function mapRow(row: GuitarRow): Gear {
+  return {
+    id: row.id,
+    brand: row.brand as GearBrand,
+    model: row.model,
+    color: row.color,
+    year: row.year,
+    imageUrl: row.image_url,
+    ownerId: row.owner_id,
+    ownerName: row.owner_name,
+    createdAt: row.created_at,
+  };
 }
 
-export async function getGearById(id: string): Promise<Gear | undefined> {
-  const list = await getGearList();
-  return list.find((g) => g.id === id);
+/**
+ * Community guitar list — Supabase-backed once env vars are set;
+ * sample data until then so the page never looks empty.
+ */
+export async function getGearList(): Promise<Gear[]> {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return mockGear;
+
+  const { data, error } = await supabase
+    .from("guitars")
+    .select(
+      "id, brand, model, color, year, image_url, owner_id, owner_name, created_at",
+    )
+    .order("created_at", { ascending: false });
+
+  if (error || !data) return mockGear;
+  return data.length > 0 ? (data as GuitarRow[]).map(mapRow) : mockGear;
 }

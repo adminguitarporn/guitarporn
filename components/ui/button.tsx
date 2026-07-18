@@ -3,13 +3,13 @@ import type { ComponentProps } from "react";
 
 type Variant = "primary" | "secondary" | "ghost";
 
+const INTERACTION =
+  "transition-all duration-[250ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-px hover:brightness-110 active:translate-y-[1px] active:brightness-95 active:duration-[120ms] motion-reduce:transform-none";
+
 const variants: Record<Variant, string> = {
-  primary:
-    "border border-white/15 bg-white/10 text-white font-bold hover:bg-white/15 focus-visible:ring-white/20",
-  secondary:
-    "border border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10 focus-visible:ring-white/20",
-  ghost:
-    "text-zinc-300 hover:text-white hover:bg-white/5 focus-visible:ring-white/15",
+  primary: `border border-white/15 bg-white/10 text-white font-bold hover:bg-white/15 hover:border-white/30 hover:shadow-[0_0_22px_rgba(147,197,253,0.14)] focus-visible:ring-white/20 ${INTERACTION}`,
+  secondary: `border border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10 hover:border-white/25 hover:shadow-[0_0_16px_rgba(147,197,253,0.1)] focus-visible:ring-white/20 ${INTERACTION}`,
+  ghost: `text-zinc-300 hover:text-white hover:bg-white/5 focus-visible:ring-white/15 ${INTERACTION}`,
 };
 
 type ButtonProps = ComponentProps<"button"> & {

@@ -1,9 +1,12 @@
-import Link from "next/link";
 import { Container } from "@/components/layout/container";
-import { AnimatedGuitarSilhouette } from "@/components/home/animated-guitar-silhouette";
+import { CategoryCards } from "@/components/home/category-cards";
+import { FeaturedShop } from "@/components/home/featured-shop";
+import { HeroCarousel } from "@/components/home/hero-carousel";
 import { ButtonLink } from "@/components/ui/button";
 import { ScrollGuitarProgress } from "@/components/home/scroll-guitar-progress";
 import { ScrollReveal } from "@/components/home/scroll-reveal";
+import { getHeroImages } from "@/lib/hero-images";
+import { getFeaturedProducts } from "@/lib/shopify";
 
 function SectionHeading({
   eyebrow,
@@ -26,29 +29,6 @@ function SectionHeading({
         {subtitle}
       </p>
     </div>
-  );
-}
-
-function MinimalCard({
-  title,
-  body,
-  href,
-}: {
-  title: string;
-  body: string;
-  href: string;
-}) {
-  return (
-    <Link
-      href={href}
-      className="group block rounded-3xl border border-white/[0.08] bg-zinc-900/20 p-6 transition hover:border-white/20 hover:bg-zinc-900/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-    >
-      <p className="text-sm font-semibold tracking-tight text-white">{title}</p>
-      <p className="mt-2 text-sm leading-relaxed text-zinc-400">{body}</p>
-      <p className="mt-4 text-xs font-medium tracking-[0.22em] text-zinc-500 uppercase group-hover:text-zinc-300">
-        Explore →
-      </p>
-    </Link>
   );
 }
 
@@ -89,49 +69,47 @@ function IconInstagram({ className = "" }: { className?: string }) {
   );
 }
 
-export function HomePage() {
+export async function HomePage() {
+  const heroImages = getHeroImages();
+  const featuredProducts = await getFeaturedProducts();
+
   return (
     <main>
       <ScrollGuitarProgress />
 
-      <section className="relative overflow-hidden border-b border-white/[0.08] bg-zinc-950 pb-20 pt-20 sm:pb-28 sm:pt-28">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-35"
-          aria-hidden
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255,255,255,0.10), transparent), radial-gradient(ellipse 50% 30% at 15% 90%, rgba(255,255,255,0.05), transparent)",
-          }}
-        />
+      <HeroCarousel images={heroImages}>
+        <Container className="pb-16 pt-32 sm:pb-24 sm:pt-40">
+          <p className="lux-in text-xs font-medium tracking-[0.28em] text-zinc-400 uppercase mb-6">
+            The GuitarPorn Database
+          </p>
+          <h1 className="lux-in max-w-4xl text-balance text-4xl font-semibold tracking-[-0.04em] text-white sm:text-6xl sm:leading-[1.05] lg:text-7xl">
+            Built for people obsessed with guitars.
+          </h1>
+          <p className="lux-in lux-in-2 mt-7 max-w-2xl text-lg leading-relaxed text-zinc-300 sm:text-xl">
+            Every guitar. Every player. The world&apos;s database for gear collectors and guitar addicts. Discover iconic guitars, legendary rigs, hidden gems and the stories behind them. One database. One community.
+          </p>
 
-        <Container className="relative">
-          <ScrollReveal>
-            <h1 className="max-w-4xl text-balance text-4xl font-semibold tracking-[-0.04em] text-white sm:text-6xl sm:leading-[1.05] lg:text-7xl">
-              loud &amp; clear
-            </h1>
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-zinc-400 sm:text-xl">
-              thank you for coming ;)
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <ButtonLink href="/videos" variant="primary">
-                Go to our Videos
-              </ButtonLink>
-              <ButtonLink href="/gear" variant="secondary">
-                Go to Gear
-              </ButtonLink>
-            </div>
-          </ScrollReveal>
+          <div className="lux-in lux-in-3 mt-10 flex flex-wrap items-center gap-3">
+            <ButtonLink href="/gear" variant="primary">
+              Explore the Database
+            </ButtonLink>
+            <ButtonLink href="/videos" variant="secondary">
+              Watch & Learn
+            </ButtonLink>
+            <ButtonLink href="/shop" variant="ghost">
+              Shop the Collection →
+            </ButtonLink>
+          </div>
         </Container>
-      </section>
+      </HeroCarousel>
 
       <section id="follow-our-channels" className="py-16 sm:py-20">
         <Container>
           <ScrollReveal className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
             <SectionHeading
-              eyebrow="follow our channels"
-              title="Hang out where we actually post."
-              subtitle="Quick takes, rigs, and the odd rabbit hole—no feeds stuffed with noise."
+              eyebrow="What are you waiting for? Follow us"
+              title="The fun is inside."
+              subtitle="Yes, inside."
             />
 
             <div className="flex w-full max-w-md flex-wrap items-stretch gap-4 sm:justify-end">
@@ -168,62 +146,19 @@ export function HomePage() {
         <Container>
           <ScrollReveal>
             <SectionHeading
-              eyebrow="Three routes"
-              title="Pick a lane."
-              subtitle="Three doors, same vibe: watch, browse, or shop when you’re ready. Some rooms are still getting furniture—that’s OK."
+              eyebrow="What’s here"
+              title="Everything a guitarist needs."
+              subtitle="Browse the gear database, watch curated videos, or grab what you need from the shop. Built by players, for players."
             />
           </ScrollReveal>
 
-          <AnimatedGuitarSilhouette />
-
-          <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <ScrollReveal>
-              <MinimalCard
-                title="Videos"
-                body="A clean wall of hand-picked performances, rigs, and techniques."
-                href="/videos"
-              />
-            </ScrollReveal>
-            <ScrollReveal>
-              <MinimalCard
-                title="Gear"
-                body="A gallery you can browse fast—brands up top, details below."
-                href="/gear"
-              />
-            </ScrollReveal>
-            <ScrollReveal>
-              <MinimalCard
-                title="Shop"
-                body="A short list of links we’d actually recommend."
-                href="/shop"
-              />
-            </ScrollReveal>
-          </div>
-        </Container>
-      </section>
-
-      <section className="border-t border-white/[0.06] py-16 sm:py-20">
-        <Container>
-          <ScrollReveal className="mx-auto max-w-2xl rounded-3xl border border-white/[0.08] bg-zinc-900/20 px-6 py-12 text-center sm:px-10 sm:py-14">
-            <p className="text-xs font-medium tracking-[0.28em] text-zinc-500 uppercase">
-              Still opening the cases
-            </p>
-            <h2 className="mt-5 text-balance text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-              We’re glad you’re here early.
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-zinc-400 sm:text-lg">
-              The site is growing with us—some pages are placeholders, some are
-              half-built, and that’s on purpose. Pull up a chair; we’ll keep
-              stacking the good stuff where you can find it.
-            </p>
-            <div className="mt-9 flex justify-center">
-              <ButtonLink href="/videos" variant="secondary">
-                See what’s up
-              </ButtonLink>
-            </div>
+          <ScrollReveal className="mt-10" delay={150}>
+            <CategoryCards />
           </ScrollReveal>
         </Container>
       </section>
+
+      <FeaturedShop products={featuredProducts} />
     </main>
   );
 }
