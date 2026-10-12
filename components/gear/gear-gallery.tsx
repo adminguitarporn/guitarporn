@@ -37,6 +37,63 @@ function GuitarCard({ gear }: { gear: Gear }) {
   );
 }
 
+const CONTACT_EMAIL = "contact@guitarporn.club";
+
+/** Dropdown next to "+ Add your guitar" — community ownership + removal terms. */
+function CommunityDisclaimer() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls="community-disclaimer"
+        className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-2.5 text-sm font-medium tracking-wide text-zinc-300 transition hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+      >
+        Community terms
+        <svg
+          className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          aria-hidden
+        >
+          <path d="M2 4.5l4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div
+          id="community-disclaimer"
+          className="absolute right-0 top-full z-40 mt-3 w-[min(22rem,calc(100vw-3rem))] rounded-2xl border border-white/10 bg-zinc-950/95 p-5 text-left shadow-[0_14px_36px_rgba(0,0,0,0.6)] backdrop-blur-md"
+        >
+          <p className="text-xs font-medium tracking-[0.22em] text-zinc-500 uppercase">
+            Community terms
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-400">
+            Every guitar and photo here belongs to the GuitarPorn community and
+            becomes part of the Gear DB. By adding yours, you confirm the
+            content is yours to share.
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-400">
+            Want something taken down? Email{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}?subject=Gear%20DB%20removal%20request`}
+              className="text-zinc-200 underline underline-offset-4 hover:text-white"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            . We process removal requests within 30 days.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Layer 1 — minimalist brand grid. */
 function BrandIndex({
   counts,
@@ -112,12 +169,15 @@ export function GearGallery({ gear }: { gear: Gear[] }) {
                 brand to browse — or add yours to the collection.
               </p>
             </div>
-            <Link
-              href="/gear/submit"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-6 py-2.5 text-sm font-bold tracking-wide text-white transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-            >
-              + Add your guitar
-            </Link>
+            <div className="relative flex shrink-0 flex-wrap items-center gap-3">
+              <Link
+                href="/gear/submit"
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-6 py-2.5 text-sm font-bold tracking-wide text-white transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+              >
+                + Add your guitar
+              </Link>
+              <CommunityDisclaimer />
+            </div>
           </div>
         </Container>
       </section>
