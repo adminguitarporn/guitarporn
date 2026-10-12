@@ -1,12 +1,11 @@
-import { fetchChannelVideos } from "@/lib/youtube";
 import { mockVideos } from "@/lib/repositories/mock-videos";
 import type { CommunityVideo } from "@/types/video";
 
 /**
- * Video listing — pulled live from the GuitarPorn YouTube channel feed
- * (cached 1h). Falls back to the curated mocks if the feed is unreachable.
+ * Video listing — curated episodes only (see mock-videos.ts).
+ * The live channel feed (`fetchChannelVideos` in lib/youtube.ts) is switched off
+ * so no generic uploads appear. To re-enable it, return the feed result here.
  */
 export async function getVideoList(): Promise<CommunityVideo[]> {
-  const videos = await fetchChannelVideos();
-  return videos.length > 0 ? videos : mockVideos;
+  return mockVideos;
 }
