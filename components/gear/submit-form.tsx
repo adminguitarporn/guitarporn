@@ -12,6 +12,7 @@ import {
   processImage,
   validateImage,
 } from "@/lib/gear-image";
+import { memberDisplayName } from "@/lib/member-name";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { GEAR_BRANDS, type GearBrand } from "@/types/gear";
 
@@ -19,12 +20,6 @@ const inputClass =
   "w-full rounded-xl border border-white/10 bg-zinc-900/40 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/25 focus:outline-none";
 const labelClass =
   "block text-xs font-medium tracking-[0.18em] text-zinc-500 uppercase";
-
-/** Public name shown next to a member's guitars. */
-function displayNameOf(user: User): string {
-  const meta = user.user_metadata as { display_name?: string } | null;
-  return meta?.display_name?.trim() || user.email?.split("@")[0] || "member";
-}
 
 function AuthPanel({ onAuthed }: { onAuthed: (user: User) => void }) {
   const supabase = useMemo(() => getSupabaseBrowserClient(), []);
@@ -287,7 +282,7 @@ export function SubmitForm() {
 
       const { error: insErr } = await supabase.from("guitars").insert({
         owner_id: user.id,
-        owner_name: displayNameOf(user),
+        owner_name: memberDisplayName(user),
         brand,
         model: model.trim(),
         color: color.trim(),
@@ -351,7 +346,7 @@ export function SubmitForm() {
       <div className="flex items-center justify-between gap-4">
         <p className="text-sm text-zinc-400">
           Signed in as{" "}
-          <span className="text-zinc-200">{displayNameOf(user)}</span> (
+          <span className="text-zinc-200">{memberDisplayName(user)}</span> (
           {user.email})
         </p>
         <button
