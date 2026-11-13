@@ -1,5 +1,135 @@
 # Changelog
 
+## 2026-11-13 — Phase 2 (`cursor/phase-2-gear-shop-seo-563a`)
+
+Pull request against `main` at `9a205c723409d5ca9e724baefa1fd19d6638a9d7`
+(includes Phase 1). Home and effect visuals (`components/fx/*`,
+`components/home/*`) are unchanged. No `/vision` route was added.
+
+The Gear DB no longer pretends the six sample photos are member rigs. The
+shop no longer shows invented prices or Limited / Exclusive badges. Share
+cards, `robots.txt`, `sitemap.xml`, and cookieless Vercel page views are in
+place.
+
+### Created
+
+- `app/gear/[id]/page.tsx` — Shareable page for one member guitar: photo,
+  brand, model, color, year, and who added it. Unknown ids call `notFound()`
+  (HTTP 404). `dynamicParams` stays on so a guitar added after deploy still
+  gets a page. Revalidates every 60 seconds, same as `/gear`.
+- `app/gear/[id]/opengraph-image.tsx` and `app/gear/[id]/twitter-image.tsx` —
+  1200×630 dark card with the guitar photo (only from a public Supabase
+  Storage URL or `guitarporn.club`), brand, model, color, year, and member
+  name. A bad id 404s. The photo fetch does not follow redirects.
+- `app/opengraph-image.tsx` and `app/twitter-image.tsx` — Default club card
+  (zinc-950, Geist, “GuitarPorn”, guitarporn.club) for pages that are not a
+  single guitar.
+- `app/robots.ts` — `/robots.txt`. Allows `/`, disallows `/account/` and
+  `/api/`, points at the sitemap.
+- `app/sitemap.ts` — `/sitemap.xml` for `/`, `/gear`, `/videos`, `/shop`,
+  `/gear/submit`, `/privacy`, `/terms`, plus each real `/gear/[id]` when
+  Supabase returns rows. Revalidates hourly.
+- `app/not-found.tsx` — Dark 404 in the same layout, used for a missing
+  guitar as well as any other unknown path.
+- `app/api/shop/waitlist/route.ts` — POST `{ email }`. With `RESEND_API_KEY`,
+  notifies `contact@guitarporn.club` via Resend from
+  `noreply@guitarporn.club`. Without that key, or if Resend rejects the
+  send, returns a mailto link. No database write, so missing Supabase or
+  Resend env vars do not crash the route.
+- `components/gear/share-link.tsx` — Copy link, and the device share sheet
+  when the browser has one.
+- `components/shop/waitlist-form.tsx` — Waitlist field on `/shop` while the
+  store is not live. Handles the mailto fallback.
+- `components/analytics/club-analytics.tsx` — `@vercel/analytics`. Strips
+  query strings and drops `/account` before a page view is sent.
+- `lib/seo.ts` — `https://guitarporn.club` as `metadataBase`, plus Open
+  Graph and Twitter helpers. Child routes set the club image themselves;
+  the root image file does not inherit onto them.
+- `lib/og-image.tsx` — Shared ImageResponse layout for the club card and
+  the per-guitar card.
+
+### Modified
+
+- `lib/repositories/gear.ts` — Supabase is the only source. No mock fallback.
+  An empty list, a missing client, or a failed query returns `[]`. Adds
+  `getGearById` (UUID only).
+- `types/gear.ts` — Brand list expanded and grouped: major brands, iconic
+  boutique, and Other (Boutique, Custom Made, Miscellaneous). The original
+  eight names are still in the list.
+- `supabase/schema.sql` — Recreates `guitars_brand_check` to match
+  `GEAR_BRANDS`. Safe to re-run. Existing rows stay valid.
+- `components/gear/gear-gallery.tsx` — Empty club state when there are no
+  submissions. Brand grid uses the grouped list. Each real guitar links to
+  `/gear/[id]`.
+- `components/gear/submit-form.tsx` and `components/gear/my-guitars.tsx` —
+  Brand `<select>` uses the same groups as the gallery.
+- `lib/shopify.ts` — `getShopCatalog()` returns `unconfigured`,
+  `unavailable`, or `ready` (including an empty product list). Homepage
+  `getFeaturedProducts()` still returns five real products or null.
+- `components/shop/shop-page.tsx` and `app/shop/page.tsx` — Live Shopify
+  products keep real prices and outbound links. Otherwise the lookbook has
+  no prices and no Limited or Exclusive badges, and the waitlist is shown.
+  The existing shop headline stays.
+- `app/layout.tsx` — `metadataBase` is `https://guitarporn.club` (no
+  `NEXT_PUBLIC_SITE_URL`). Analytics mounts only when `VERCEL=1`.
+- `app/page.tsx`, `app/videos/page.tsx`, `app/gear/page.tsx`,
+  `app/gear/submit/page.tsx`, `app/privacy/page.tsx`, `app/terms/page.tsx` —
+  Canonical URL, Open Graph, and Twitter card per route.
+- `app/account/reset/page.tsx` — `noindex`. Password-reset URLs are also
+  disallowed in `robots.txt` and omitted from analytics.
+- `app/privacy/page.tsx` and `app/terms/page.tsx` — Privacy now describes
+  the shop waitlist and cookieless Vercel page views (daily request hash,
+  discarded after 24 hours, no analytics cookie). Terms point at that.
+- `lib/supabase/config.ts` — Comment no longer says the gallery renders
+  samples.
+- `package.json` / `package-lock.json` — Adds `@vercel/analytics`.
+- `SETUP.md` — Brand-constraint re-run, shop waitlist, optional
+  `RESEND_API_KEY`, and Web Analytics.
+
+### Removed
+
+- `lib/repositories/mock-gear.ts` — The six fake member guitars.
+- `public/gear-samples/*.jpg` — Photos that existed only for that mock list.
+  They are not shown as a studio archive.
+
+### Environment and deploy
+
+- Re-run `supabase/schema.sql` in the Supabase SQL Editor after deploy if
+  the project already exists, so new brand names pass `guitars_brand_check`.
+- `RESEND_API_KEY` (optional, server-only). Waitlist delivery. Without it,
+  the form offers a mailto to `contact@guitarporn.club`. Not the same value
+  as the Resend SMTP password in Supabase, though it can be a Resend API
+  key from the same account. Sender must be allowed to use
+  `noreply@guitarporn.club`.
+- Shopify variables are unchanged. When
+  `NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN` and `SHOPIFY_STOREFRONT_TOKEN` are both
+  set and the Storefront API answers, `/shop` shows those products. The
+  public store link is still `NEXT_PUBLIC_SHOPIFY_STORE_URL`.
+- Vercel → project → Analytics → enable Web Analytics. No new env var. The
+  package is inert unless the build sees `VERCEL=1`.
+- `NEXT_PUBLIC_SITE_URL` is unused. Share URLs are always
+  `https://guitarporn.club`.
+
+### Verification
+
+`npm run lint` and `npm run build` succeeded. `next start` on port 3456:
+
+| Path | Result |
+| --- | --- |
+| `/`, `/videos`, `/gear`, `/shop`, `/privacy`, `/terms`, `/robots.txt`, `/sitemap.xml`, `/opengraph-image`, `/twitter-image` | HTTP 200 |
+| `/gear/not-a-real-id` and a nil UUID | HTTP 404, no server error |
+| `/gear/{uuid}/opengraph-image` for an unknown id | HTTP 404 |
+| `POST /api/shop/waitlist` with a valid email and no Resend key | HTTP 200, `delivered: false`, mailto link |
+| Invalid waitlist email | HTTP 400 |
+
+HTML on `/`, `/videos`, `/gear`, `/shop`, `/privacy`, and `/terms` includes
+`og:title`, `og:description`, `og:image`, `og:url`, `twitter:card`, and
+`twitter:image`. `/gear` renders “No member rigs yet.” and does not contain
+the old sample names. `/shop` has no `€` prices and no Limited or Exclusive
+badges. The server log stayed quiet. There is no live member guitar in this
+environment, so a populated `/gear/[id]` page was not returned as HTTP 200;
+unknown ids 404 as specified.
+
 ## 2026-11-13 — Phase 1 (`cursor/phase-1-legal-youtube-headers-1e2b`)
 
 Pull request against `main` at `230da96a84d3f339a7df9ce7d84f5ef72f4417f5`.

@@ -4,11 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Container } from "@/components/layout/container";
-import { GEAR_BRANDS, type Gear, type GearBrand } from "@/types/gear";
+import { GEAR_BRAND_GROUPS, GEAR_BRANDS, type Gear } from "@/types/gear";
 
 function GuitarCard({ gear }: { gear: Gear }) {
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-zinc-900/20 transition-all duration-[450ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1 hover:border-white/25 hover:bg-zinc-900/30 hover:shadow-[0_14px_36px_rgba(0,0,0,0.5),0_0_20px_rgba(147,197,253,0.05)] motion-reduce:transform-none">
+    <Link
+      href={`/gear/${gear.id}`}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-zinc-900/20 transition-all duration-[450ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1 hover:border-white/25 hover:bg-zinc-900/30 hover:shadow-[0_14px_36px_rgba(0,0,0,0.5),0_0_20px_rgba(147,197,253,0.05)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 motion-reduce:transform-none"
+    >
       <div className="relative aspect-[3/4] overflow-hidden bg-zinc-900">
         <Image
           src={gear.imageUrl}
@@ -33,7 +36,7 @@ function GuitarCard({ gear }: { gear: Gear }) {
           </p>
         )}
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -94,46 +97,71 @@ function CommunityDisclaimer() {
   );
 }
 
-/** Layer 1 — minimalist brand grid. */
+/** Layer 1 — brand grid, grouped so the longer list still scans. */
 function BrandIndex({
   counts,
   onSelect,
 }: {
-  counts: Record<GearBrand, number>;
-  onSelect: (brand: GearBrand) => void;
+  counts: Record<string, number>;
+  onSelect: (brand: string) => void;
 }) {
+  const known = new Set<string>(GEAR_BRANDS);
+  const extras = Object.keys(counts)
+    .filter((brand) => !known.has(brand) && (counts[brand] ?? 0) > 0)
+    .sort((a, b) => a.localeCompare(b));
+
+  const groups = [
+    ...GEAR_BRAND_GROUPS.map((group) => ({
+      label: group.label,
+      brands: [...group.brands],
+    })),
+    ...(extras.length > 0
+      ? [{ label: "From the database", brands: extras }]
+      : []),
+  ];
+
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-      {GEAR_BRANDS.map((brand) => {
-        const count = counts[brand] ?? 0;
-        return (
-          <button
-            key={brand}
-            type="button"
-            onClick={() => onSelect(brand)}
-            className="group flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-2xl border border-white/[0.08] bg-zinc-900/20 px-4 text-center transition-all duration-[450ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1 hover:border-white/25 hover:bg-zinc-900/40 hover:shadow-[0_14px_36px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 motion-reduce:transform-none sm:aspect-[3/2]"
-          >
-            <span className="text-lg font-semibold tracking-tight text-zinc-200 transition group-hover:text-white sm:text-xl">
-              {brand}
-            </span>
-            <span className="text-xs text-zinc-600 transition group-hover:text-zinc-400">
-              {count} {count === 1 ? "guitar" : "guitars"}
-            </span>
-          </button>
-        );
-      })}
+    <div className="flex flex-col gap-10">
+      {groups.map((group) => (
+        <div key={group.label}>
+          <h2 className="text-xs font-medium tracking-[0.28em] text-zinc-500 uppercase">
+            {group.label}
+          </h2>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+            {group.brands.map((brand) => {
+              const count = counts[brand] ?? 0;
+              return (
+                <button
+                  key={brand}
+                  type="button"
+                  onClick={() => onSelect(brand)}
+                  className="group flex min-h-24 flex-col items-start justify-between rounded-2xl border border-white/[0.08] bg-zinc-900/20 px-4 py-4 text-left transition-all duration-[450ms] ease-[cubic-bezier(.22,.61,.36,1)] hover:-translate-y-1 hover:border-white/25 hover:bg-zinc-900/40 hover:shadow-[0_14px_36px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 motion-reduce:transform-none"
+                >
+                  <span className="text-base font-semibold tracking-tight text-zinc-200 transition group-hover:text-white sm:text-lg">
+                    {brand}
+                  </span>
+                  <span className="text-xs text-zinc-600 transition group-hover:text-zinc-400">
+                    {count} {count === 1 ? "guitar" : "guitars"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
 export function GearGallery({ gear }: { gear: Gear[] }) {
-  const [activeBrand, setActiveBrand] = useState<GearBrand | null>(null);
+  const [activeBrand, setActiveBrand] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const empty = gear.length === 0;
 
   const counts = useMemo(() => {
-    const c = {} as Record<GearBrand, number>;
+    const c: Record<string, number> = {};
     for (const b of GEAR_BRANDS) c[b] = 0;
-    for (const g of gear) if (g.brand in c) c[g.brand]++;
+    for (const g of gear) c[g.brand] = (c[g.brand] ?? 0) + 1;
     return c;
   }, [gear]);
 
@@ -165,8 +193,9 @@ export function GearGallery({ gear }: { gear: Gear[] }) {
                 The Gear DB
               </h1>
               <p className="mt-4 max-w-xl text-base text-zinc-400">
-                Every guitar in here belongs to a member of the club. Pick a
-                brand to browse — or add yours to the collection.
+                {empty
+                  ? "Nothing in here yet is a stand-in. The first guitars will be real member rigs — pick a brand, or submit yours."
+                  : "Every guitar in here belongs to a member of the club. Pick a brand to browse — or add yours to the collection."}
               </p>
             </div>
             <div className="relative flex shrink-0 flex-wrap items-center gap-3">
@@ -181,6 +210,32 @@ export function GearGallery({ gear }: { gear: Gear[] }) {
           </div>
         </Container>
       </section>
+
+      {empty && activeBrand === null && (
+        <section className="border-b border-white/[0.08] py-10 sm:py-14">
+          <Container>
+            <div className="rounded-3xl border border-white/[0.08] bg-zinc-900/20 px-6 py-12 text-center sm:px-12">
+              <p className="text-xs font-medium tracking-[0.28em] text-zinc-500 uppercase">
+                Empty club floor
+              </p>
+              <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                No member rigs yet.
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-zinc-400">
+                The Gear DB only lists guitars members actually upload. Submit
+                the first rig and it will live here, under its brand, with your
+                name on it.
+              </p>
+              <Link
+                href="/gear/submit"
+                className="mt-8 inline-flex items-center justify-center rounded-full border border-white/15 bg-white/10 px-6 py-2.5 text-sm font-bold tracking-wide text-white transition hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+              >
+                Submit the first rig
+              </Link>
+            </div>
+          </Container>
+        </section>
+      )}
 
       {activeBrand === null ? (
         /* ---------- Layer 1: brand index ---------- */

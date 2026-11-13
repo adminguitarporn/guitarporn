@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Privacy",
   description:
-    "How GuitarPorn Club, operated from Spain in the European Union, handles accounts, guitar photos, email, and essential session cookies.",
-};
+    "How GuitarPorn Club, operated from Spain in the European Union, handles accounts, guitar photos, email, the shop waitlist, cookieless page views, and essential session cookies.",
+  path: "/privacy",
+});
 
 const CONTACT_EMAIL = "contact@guitarporn.club";
 
@@ -116,6 +117,32 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-lg font-semibold text-white">
+                Shop waitlist
+              </h2>
+              <p className="mt-3">
+                The shop is a preview until a Shopify store is connected. If
+                you join the waitlist, you give us an email address so we can
+                tell you when the drop opens. That is consent (GDPR Article
+                6(1)(a)). You can withdraw it by emailing{" "}
+                <a
+                  href={`mailto:${CONTACT_EMAIL}?subject=Shop%20waitlist%20removal`}
+                  className="text-zinc-200 underline underline-offset-4 hover:text-white"
+                >
+                  {CONTACT_EMAIL}
+                </a>
+                .
+              </p>
+              <p className="mt-3">
+                When waitlist mail is configured, the site sends that address
+                to {CONTACT_EMAIL} through Resend and does not keep a separate
+                copy in the guitar database. When it is not configured, the
+                site does not store the address: it gives you a mailto link so
+                you can send the request from your own inbox.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold text-white">
                 Essential session cookies
               </h2>
               <p className="mt-3">
@@ -137,6 +164,31 @@ export default function PrivacyPage() {
 
             <section>
               <h2 className="text-lg font-semibold text-white">
+                Page views
+              </h2>
+              <p className="mt-3">
+                On the Vercel deployment, the site loads Vercel Web Analytics.
+                It does not set a cookie. Vercel records a page view with the
+                time, the page path, the referrer, the browser, the operating
+                system, the device type, and a coarse location (country,
+                region, and city). Visitors are separated for a single day by
+                a hash of the request, which Vercel discards after 24 hours.
+                That hash is not used to follow someone across websites or
+                across days.
+              </p>
+              <p className="mt-3">
+                Before a page view is sent, query strings are removed, and
+                visits to account pages (including password reset) are not
+                sent. We do not send custom events. The legal basis is
+                legitimate interest in seeing which public pages are used
+                (GDPR Article 6(1)(f)), limited to this cookieless data. It is
+                not used for advertising. The script is included only on the
+                Vercel deployment, not in a local build.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold text-white">
                 How long we keep data
               </h2>
               <p className="mt-3">
@@ -146,7 +198,10 @@ export default function PrivacyPage() {
                 Session cookies last for the Supabase Auth session and are
                 cleared when you sign out or when they expire. Password-reset
                 and confirmation messages are kept only as long as Resend and
-                Supabase need them to deliver the mail.
+                Supabase need them to deliver the mail. A waitlist email sent
+                through Resend stays in the club inbox until we delete it or
+                you ask us to. Vercel discards the daily visitor hash after
+                24 hours.
               </p>
             </section>
 
@@ -161,9 +216,20 @@ export default function PrivacyPage() {
                 </li>
                 <li>
                   Resend — delivery of transactional email from
-                  noreply@guitarporn.club.
+                  noreply@guitarporn.club, and waitlist notes to{" "}
+                  {CONTACT_EMAIL} when that mail is configured.
+                </li>
+                <li>
+                  Vercel — hosting, and cookieless page-view analytics on the
+                  deployed site.
                 </li>
               </ul>
+              <p className="mt-3">
+                A link to the Shopify store leaves this site. We do not send
+                your account or waitlist email to Shopify. If the store is
+                connected, the server reads the public product catalog with
+                the Storefront API.
+              </p>
               <p className="mt-3">
                 These providers act on our instructions for the purposes above.
                 Some of their infrastructure may be outside the EU; where that

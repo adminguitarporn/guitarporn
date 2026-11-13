@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { Container } from "@/components/layout/container";
 import { SubmitForm } from "@/components/gear/submit-form";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Add your guitar",
   description:
     "Join the club and add your guitar to the community collection. One front-view photo, brand, model, color.",
-};
+  path: "/gear/submit",
+});
 
 export default function SubmitPage() {
   return (

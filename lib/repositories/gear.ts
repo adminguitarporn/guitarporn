@@ -1,6 +1,6 @@
-import { mockGear } from "@/lib/repositories/mock-gear";
+import { cache } from "react";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
-import type { Gear, GearBrand } from "@/types/gear";
+import type { Gear } from "@/types/gear";
 
 type GuitarRow = {
   id: string;
@@ -14,10 +14,17 @@ type GuitarRow = {
   created_at: string;
 };
 
+const GEAR_COLUMNS =
+  "id, brand, model, color, year, image_url, owner_id, owner_name, created_at";
+
+/** Supabase `guitars.id` values are UUIDs. Anything else is not a member guitar. */
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function mapRow(row: GuitarRow): Gear {
   return {
     id: row.id,
-    brand: row.brand as GearBrand,
+    brand: row.brand,
     model: row.model,
     color: row.color,
     year: row.year,
@@ -29,20 +36,42 @@ function mapRow(row: GuitarRow): Gear {
 }
 
 /**
- * Community guitar list — Supabase-backed once env vars are set;
- * sample data until then so the page never looks empty.
+ * Member guitars only. Sample rigs are not returned — an empty list means
+ * nobody has submitted yet (or Supabase is not configured).
  */
-export async function getGearList(): Promise<Gear[]> {
+export const getGearList = cache(async (): Promise<Gear[]> => {
   const supabase = getSupabaseServerClient();
-  if (!supabase) return mockGear;
+  if (!supabase) return [];
 
-  const { data, error } = await supabase
-    .from("guitars")
-    .select(
-      "id, brand, model, color, year, image_url, owner_id, owner_name, created_at",
-    )
-    .order("created_at", { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from("guitars")
+      .select(GEAR_COLUMNS)
+      .order("created_at", { ascending: false });
 
-  if (error || !data) return mockGear;
-  return data.length > 0 ? (data as GuitarRow[]).map(mapRow) : mockGear;
-}
+    if (error || !data) return [];
+    return (data as GuitarRow[]).map(mapRow);
+  } catch {
+    return [];
+  }
+});
+
+export const getGearById = cache(async (id: string): Promise<Gear | null> => {
+  if (!UUID_RE.test(id)) return null;
+
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return null;
+
+  try {
+    const { data, error } = await supabase
+      .from("guitars")
+      .select(GEAR_COLUMNS)
+      .eq("id", id)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return mapRow(data as GuitarRow);
+  } catch {
+    return null;
+  }
+});

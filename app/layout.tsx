@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ClubAnalytics } from "@/components/analytics/club-analytics";
 import { Atmosphere } from "@/components/fx/atmosphere";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteNavbar } from "@/components/layout/site-navbar";
+import { rootMetadata } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,17 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
-  title: {
-    default: "GuitarPorn — Guitar community",
-    template: "%s · GuitarPorn",
-  },
-  description:
-    "A premium dark-space for guitarists: gear gallery, curated videos, and shop links.",
-};
+export const metadata = rootMetadata;
 
 export default function RootLayout({
   children,
@@ -42,6 +33,7 @@ export default function RootLayout({
         <SiteNavbar />
         <div className="relative z-10 flex-1">{children}</div>
         <SiteFooter />
+        {process.env.VERCEL === "1" ? <ClubAnalytics /> : null}
       </body>
     </html>
   );

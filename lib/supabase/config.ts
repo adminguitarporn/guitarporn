@@ -4,7 +4,7 @@ export const SUPABASE_ANON_KEY =
 
 /**
  * True once the two Supabase env vars are set (see README / .env.example).
- * Until then the Gear DB renders the sample gallery and the submit form
+ * Until then the Gear DB shows an empty club state and the submit form
  * shows a "setup pending" notice instead of crashing.
  */
 export function isSupabaseConfigured(): boolean {

@@ -8,12 +8,7 @@
 create table if not exists public.guitars (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users (id) on delete cascade,
-  brand text not null check (
-    brand in (
-      'Gibson', 'Fender', 'PRS', 'ESP', 'Ibanez',
-      'Miscellaneous', 'Boutique', 'Custom Made'
-    )
-  ),
+  brand text not null,
   model text not null check (char_length(model) between 1 and 120),
   color text not null check (char_length(color) between 1 and 80),
   year int check (year between 1900 and 2100),
@@ -24,6 +19,84 @@ create table if not exists public.guitars (
 
 -- Migration for projects created before owner_name existed:
 alter table public.guitars add column if not exists owner_name text;
+
+-- Brand list must match GEAR_BRANDS in types/gear.ts.
+-- Drop every existing brand check (Postgres may store IN as ANY(ARRAY)),
+-- then recreate guitars_brand_check. Safe to re-run.
+do $$
+declare
+  r record;
+begin
+  for r in
+    select con.conname
+    from pg_constraint con
+    join pg_class rel on rel.oid = con.conrelid
+    join pg_namespace nsp on nsp.oid = rel.relnamespace
+    where nsp.nspname = 'public'
+      and rel.relname = 'guitars'
+      and con.contype = 'c'
+      and pg_get_constraintdef(con.oid) ilike '%brand%'
+  loop
+    execute format('alter table public.guitars drop constraint %I', r.conname);
+  end loop;
+end $$;
+
+alter table public.guitars drop constraint if exists guitars_brand_check;
+alter table public.guitars add constraint guitars_brand_check
+  check (
+    brand in (
+      'BC Rich',
+      'Charvel',
+      'D''Angelico',
+      'Danelectro',
+      'Dean',
+      'Duesenberg',
+      'ESP',
+      'EVH',
+      'Epiphone',
+      'Fender',
+      'G&L',
+      'Gibson',
+      'Godin',
+      'Gretsch',
+      'Guild',
+      'Harmony',
+      'Höfner',
+      'Ibanez',
+      'Jackson',
+      'Kramer',
+      'Martin',
+      'Music Man',
+      'PRS',
+      'Reverend',
+      'Rickenbacker',
+      'Schecter',
+      'Squier',
+      'Supro',
+      'Takamine',
+      'Taylor',
+      'Yamaha',
+      'Collings',
+      'Eastman',
+      'Fano',
+      'Heritage',
+      'James Tyler',
+      'Kiesel',
+      'Knaggs',
+      'Lowden',
+      'Mayones',
+      'Nik Huber',
+      'Novo',
+      'Patrick James Eggle',
+      'Santa Cruz',
+      'Strandberg',
+      'Suhr',
+      'Tom Anderson',
+      'Boutique',
+      'Custom Made',
+      'Miscellaneous'
+    )
+  );
 
 create index if not exists guitars_brand_idx on public.guitars (brand);
 create index if not exists guitars_created_idx on public.guitars (created_at desc);

@@ -10,7 +10,7 @@ import {
   storagePathFromUrl,
   validateImage,
 } from "@/lib/gear-image";
-import { GEAR_BRANDS, type GearBrand } from "@/types/gear";
+import { GEAR_BRAND_GROUPS, type GearBrand } from "@/types/gear";
 
 type Row = {
   id: string;
@@ -164,10 +164,14 @@ export function MyGuitars({
                   }
                   className={`${inputClass} appearance-none`}
                 >
-                  {GEAR_BRANDS.map((b) => (
-                    <option key={b} value={b} className="bg-zinc-900">
-                      {b}
-                    </option>
+                  {GEAR_BRAND_GROUPS.map((group) => (
+                    <optgroup key={group.label} label={group.label}>
+                      {group.brands.map((b) => (
+                        <option key={b} value={b} className="bg-zinc-900">
+                          {b}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
                 <input
