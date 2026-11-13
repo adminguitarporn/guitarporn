@@ -45,6 +45,12 @@ alter table public.guitars drop constraint if exists guitars_brand_check;
 alter table public.guitars add constraint guitars_brand_check
   check (
     brand in (
+      'Gibson',
+      'Fender',
+      'PRS',
+      'Ibanez',
+      'Custom Made',
+      'Boutique',
       'BC Rich',
       'Charvel',
       'D''Angelico',
@@ -54,20 +60,16 @@ alter table public.guitars add constraint guitars_brand_check
       'ESP',
       'EVH',
       'Epiphone',
-      'Fender',
       'G&L',
-      'Gibson',
       'Godin',
       'Gretsch',
       'Guild',
       'Harmony',
       'Höfner',
-      'Ibanez',
       'Jackson',
       'Kramer',
       'Martin',
       'Music Man',
-      'PRS',
       'Reverend',
       'Rickenbacker',
       'Schecter',
@@ -92,8 +94,6 @@ alter table public.guitars add constraint guitars_brand_check
       'Strandberg',
       'Suhr',
       'Tom Anderson',
-      'Boutique',
-      'Custom Made',
       'Miscellaneous'
     )
   );

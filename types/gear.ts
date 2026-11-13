@@ -4,6 +4,15 @@
  * Brand names here and the `guitars_brand_check` constraint must stay identical.
  */
 
+const MOST_FAMOUS_BRANDS = [
+  "Gibson",
+  "Fender",
+  "PRS",
+  "Ibanez",
+  "Custom Made",
+  "Boutique",
+] as const;
+
 const MAJOR_BRANDS = [
   "BC Rich",
   "Charvel",
@@ -14,20 +23,16 @@ const MAJOR_BRANDS = [
   "ESP",
   "EVH",
   "Epiphone",
-  "Fender",
   "G&L",
-  "Gibson",
   "Godin",
   "Gretsch",
   "Guild",
   "Harmony",
   "Höfner",
-  "Ibanez",
   "Jackson",
   "Kramer",
   "Martin",
   "Music Man",
-  "PRS",
   "Reverend",
   "Rickenbacker",
   "Schecter",
@@ -57,15 +62,17 @@ const BOUTIQUE_BRANDS = [
   "Tom Anderson",
 ] as const;
 
-const OTHER_BRANDS = ["Boutique", "Custom Made", "Miscellaneous"] as const;
+const OTHER_BRANDS = ["Miscellaneous"] as const;
 
 export const GEAR_BRAND_GROUPS = [
+  { label: "Most famous", brands: MOST_FAMOUS_BRANDS },
   { label: "Major brands", brands: MAJOR_BRANDS },
   { label: "Iconic boutique", brands: BOUTIQUE_BRANDS },
   { label: "Other", brands: OTHER_BRANDS },
 ] as const;
 
 export const GEAR_BRANDS = [
+  ...MOST_FAMOUS_BRANDS,
   ...MAJOR_BRANDS,
   ...BOUTIQUE_BRANDS,
   ...OTHER_BRANDS,

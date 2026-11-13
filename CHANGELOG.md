@@ -53,9 +53,10 @@ place.
 - `lib/repositories/gear.ts` — Supabase is the only source. No mock fallback.
   An empty list, a missing client, or a failed query returns `[]`. Adds
   `getGearById` (UUID only).
-- `types/gear.ts` — Brand list expanded and grouped: major brands, iconic
-  boutique, and Other (Boutique, Custom Made, Miscellaneous). The original
-  eight names are still in the list.
+- `types/gear.ts` — Brand list expanded and grouped. `Most famous` is
+  first: Gibson, Fender, PRS, Ibanez, Custom Made, Boutique. Those six are
+  not repeated under Major brands or Other. Other keeps Miscellaneous.
+  `GEAR_BRANDS` stays unique and matches `guitars_brand_check`.
 - `supabase/schema.sql` — Recreates `guitars_brand_check` to match
   `GEAR_BRANDS`. Safe to re-run. Existing rows stay valid.
 - `components/gear/gear-gallery.tsx` — Empty club state when there are no

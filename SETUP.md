@@ -57,8 +57,9 @@ The Gear DB does not show sample guitars. With no rows (or no Supabase
 keys) `/gear` says the club floor is empty and asks for the first rig.
 
 **Brand list:** `types/gear.ts` and the `guitars_brand_check` constraint in
-`supabase/schema.sql` list the same names (majors, iconic boutique, and
-Miscellaneous / Boutique / Custom Made). If the project was created from an
+`supabase/schema.sql` list the same names. On `/gear` the first group is
+Most famous (Gibson, Fender, PRS, Ibanez, Custom Made, Boutique), then
+major brands, iconic boutique, and Miscellaneous. If the project was created from an
 older schema, re-run `supabase/schema.sql` in the SQL Editor before members
 submit a brand that was not in the original eight. The script drops the old
 brand check and recreates it. Existing rows stay valid.
