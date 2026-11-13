@@ -74,12 +74,12 @@ function CommunityDisclaimer() {
             Community terms
           </p>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Every guitar and photo here belongs to the GuitarPorn community and
-            becomes part of the Gear DB. By adding yours, you confirm the
-            content is yours to share.
+            You keep ownership of the photos you upload. Adding a guitar grants
+            GuitarPorn Club a license to display it in the Gear DB. You confirm
+            the photo is yours to share.
           </p>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Want something taken down? Email{" "}
+            Want it taken down? Delete it from your account, or email{" "}
             <a
               href={`mailto:${CONTACT_EMAIL}?subject=Gear%20DB%20removal%20request`}
               className="text-zinc-200 underline underline-offset-4 hover:text-white"

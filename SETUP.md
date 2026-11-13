@@ -128,9 +128,25 @@ Drop images in `public/hero/` (landscape, ~2400px wide, compressed under
 1 MB — [squoosh.app](https://squoosh.app)). Number prefixes control order:
 `01-x.jpg`, `02-y.jpg`. Delete old ones, commit, push.
 
-## Videos (nothing to do)
+## Videos
 
-New YouTube uploads appear on `/videos` within the hour automatically.
+New uploads on the GuitarPorn YouTube channel appear on `/videos`
+automatically. The page refreshes at most once an hour and tries, in order:
+
+1. YouTube Data API v3, only if `YOUTUBE_API_KEY` is set (up to 50 uploads).
+2. The channel RSS feed.
+3. The public channel `/videos` page (`ytInitialData`).
+4. One curated fallback video if every live source fails.
+
+`YOUTUBE_CHANNEL_URL` is not an environment variable. The footer and the
+videos page use the `YOUTUBE_CHANNEL_URL` constant in `lib/youtube.ts`
+(`https://www.youtube.com/@guitarporn-club`, channel id
+`UC5vYif_qR8a-u_4ROY84yrw`).
+
+The API key is optional. Without it, RSS and the channel page still update
+`/videos`. To add it: Google Cloud → enable YouTube Data API v3 → create an
+API key → set `YOUTUBE_API_KEY` in `.env.local` and in the hosting
+dashboard, then redeploy.
 
 ---
 

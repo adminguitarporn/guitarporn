@@ -1,9 +1,19 @@
+import { isYoutubeId } from "@/lib/youtube-id";
+
 type Props = {
   youtubeId: string;
   title: string;
 };
 
 export function YoutubeEmbed({ youtubeId, title }: Props) {
+  if (!isYoutubeId(youtubeId)) {
+    return (
+      <div className="flex aspect-video w-full items-center justify-center rounded-2xl border border-white/10 bg-black px-6 text-center text-sm text-zinc-500">
+        This video can’t be embedded.
+      </div>
+    );
+  }
+
   const src = `https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0&modestbranding=1`;
 
   return (
