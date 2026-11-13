@@ -5,6 +5,7 @@ import { ResetForm } from "@/components/account/reset-form";
 export const metadata: Metadata = {
   title: "Reset password",
   description: "Set a new password for your GuitarPorn account.",
+  robots: { index: false, follow: false },
 };
 
 export default function ResetPage() {

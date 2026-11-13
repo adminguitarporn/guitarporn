@@ -14,7 +14,7 @@ import {
 } from "@/lib/gear-image";
 import { memberDisplayName } from "@/lib/member-name";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
-import { GEAR_BRANDS, type GearBrand } from "@/types/gear";
+import { GEAR_BRAND_GROUPS, type GearBrand } from "@/types/gear";
 
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-zinc-900/40 px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 focus:border-white/25 focus:outline-none";
@@ -377,10 +377,14 @@ export function SubmitForm() {
             <option value="" disabled>
               Select a brand
             </option>
-            {GEAR_BRANDS.map((b) => (
-              <option key={b} value={b} className="bg-zinc-900">
-                {b}
-              </option>
+            {GEAR_BRAND_GROUPS.map((group) => (
+              <optgroup key={group.label} label={group.label}>
+                {group.brands.map((b) => (
+                  <option key={b} value={b} className="bg-zinc-900">
+                    {b}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>

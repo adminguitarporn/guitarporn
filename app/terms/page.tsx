@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Terms",
   description:
-    "Terms of use for GuitarPorn Club: accounts, guitar photo ownership and display license, takedown, email, and essential session cookies.",
-};
+    "Terms of use for GuitarPorn Club: accounts, guitar photo ownership and display license, takedown, email, the shop waitlist, and essential session cookies.",
+  path: "/terms",
+});
 
 const CONTACT_EMAIL = "contact@guitarporn.club";
 
@@ -149,15 +150,17 @@ export default function TermsPage() {
               </p>
               <p className="mt-3">
                 The site sets essential session cookies so Supabase Auth can
-                keep you signed in. They are not advertising cookies. Details
-                are in the{" "}
+                keep you signed in. They are not advertising cookies. Joining
+                the shop waitlist means you agree we may email you when the
+                store opens, as described in the{" "}
                 <Link
                   href="/privacy"
                   className="text-zinc-200 underline underline-offset-4 hover:text-white"
                 >
                   privacy policy
                 </Link>
-                .
+                . That policy also describes cookieless page-view counts on
+                the Vercel deployment.
               </p>
             </section>
 
@@ -166,11 +169,13 @@ export default function TermsPage() {
                 Other people&apos;s content
               </h2>
               <p className="mt-3">
-                Guitars in the gallery are submitted by members. Video pages
+                Guitars in the gallery are submitted by members. The gallery
+                does not fill itself with sample instruments. Video pages
                 embed public uploads from the GuitarPorn YouTube channel.
                 GuitarPorn Club does not promise that member listings are
                 complete or error-free. Shop links may leave this site for a
-                store we do not operate.
+                store we do not operate. Until that store is connected, shop
+                cards are previews without prices.
               </p>
             </section>
 

@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import { GearGallery } from "@/components/gear/gear-gallery";
 import { getGearList } from "@/lib/repositories/gear";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Gear DB",
   description:
-    "The community guitar database. Every instrument uploaded by a member of the club — browse by brand, add yours.",
-};
+    "The member guitar database. Real submissions only — browse by brand, or add the first rig.",
+  path: "/gear",
+});
 
 export const revalidate = 60;
 

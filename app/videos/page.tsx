@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import { Container } from "@/components/layout/container";
 import { VideoRow } from "@/components/videos/video-row";
 import { getVideoList } from "@/lib/repositories/videos";
+import { pageMeta } from "@/lib/seo";
 import { YOUTUBE_CHANNEL_URL } from "@/lib/youtube";
 
-export const metadata: Metadata = {
+export const metadata = pageMeta({
   title: "Videos",
   description:
     "Every GuitarPorn upload — rigs, rare builds, and instruments up close. Straight from the channel.",
-};
+  path: "/videos",
+});
 
 export const revalidate = 3600;
 
