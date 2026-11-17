@@ -2,6 +2,8 @@
 
 ## 2026-11-17 — Vercel Web Analytics (`cursor/vercel-web-analytics-cee5`)
 
+Pull request against `main` at `5e24eaae08fb7c8b201e86425f4f2badaf31915e`.
+
 Vercel Web Analytics added (cookieless, free on Hobby, enabled in dashboard
 17 Nov 2026).
 
