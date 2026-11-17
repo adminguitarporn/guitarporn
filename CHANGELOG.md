@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-11-17 — Vercel Web Analytics (`cursor/vercel-web-analytics-cee5`)
+
+Vercel Web Analytics added (cookieless, free on Hobby, enabled in dashboard
+17 Nov 2026).
+
+The app already mounts `@vercel/analytics` (`Analytics` from
+`@vercel/analytics/next`) in the root layout, only when `VERCEL=1`, through
+`components/analytics/club-analytics.tsx`. Query strings are stripped and
+`/account` is not sent. A second `<Analytics />` was not added: each instance
+sends its own page view, and a bare one would skip that filter. No new
+environment variables.
+
+`next.config.ts` sends `X-Content-Type-Options`, `Referrer-Policy`, and
+`X-Frame-Options` only. There is no Content-Security-Policy in
+`next.config.ts`, no middleware, and no `vercel.json`. The insight script
+loads from same-origin `/_vercel/insights/*`, which needs no header change.
+
+### Modified
+
+- `CHANGELOG.md` — Records that Web Analytics is on in the Vercel dashboard
+  as of 17 Nov 2026.
+
+### Environment and deploy
+
+- No new environment variables. Web Analytics is enabled on the Vercel
+  project (Hobby, cookieless). The package stays inert unless the build sees
+  `VERCEL=1`.
+
+### Verification
+
+`npm run lint`, `npx tsc --noEmit`, and `npm run build` succeeded (Next.js
+16.2.4).
+
 ## 2026-11-13 — Phase 2 (`cursor/phase-2-gear-shop-seo-563a`)
 
 Pull request against `main` at `9a205c723409d5ca9e724baefa1fd19d6638a9d7`
